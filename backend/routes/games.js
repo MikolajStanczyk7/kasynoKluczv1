@@ -360,4 +360,33 @@ router.post('/roulette', authenticateToken, (req, res) => {
   }
 });
 
+// GET /games/ranking - Pobranie top 10 graczy
+router.get('/ranking', (req, res) => {
+  try {
+    // Pobierz top 10 graczy sortowanych po balansie malejąco
+    db.all(
+      'SELECT id, username, balance FROM users ORDER BY balance DESC LIMIT 10',
+      (err, rows) => {
+        if (err) {
+          console.error('Błąd pobierania rankingu:', err);
+          return res.status(500).json({ error: 'Błąd serwera' });
+        }
+
+        // Mapuj wyniki na format z rankingiem
+        const ranking = rows.map((row, index) => ({
+          rank: index + 1,
+          name: row.username,
+          balance: row.balance,
+          id: row.id,
+        }));
+
+        res.json(ranking);
+      }
+    );
+  } catch (err) {
+    console.error('Błąd /games/ranking:', err);
+    res.status(500).json({ error: 'Błąd serwera' });
+  }
+});
+
 module.exports = router;

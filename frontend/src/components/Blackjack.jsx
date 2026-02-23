@@ -259,7 +259,7 @@ export default function Blackjack({ user, onBalanceUpdate, onGameEnd }) {
         <div className="blackjack-info">
           <h3>💡 Zasady gry:</h3>
           <p>🎯 Celem jest zbliżyć się do 21</p>
-          <p>🃏 Karta > 21 = Przegrana (bust)</p>
+          <p>🃏 Karta &gt; 21 = Przegrana (bust)</p>
           <p>⭐ Dealer muszę dobierać do 17</p>
           <p>🏆 Wygrana = 2x stawka</p>
         </div>

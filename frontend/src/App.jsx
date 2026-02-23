@@ -8,10 +8,13 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn());
   const [user, setUser] = useState(getCurrentUser());
 
+  console.log('App component rendered. Authenticated:', isAuthenticated, 'User:', user);
+
   // Monitoring zalogowania
   useEffect(() => {
     setIsAuthenticated(isLoggedIn());
     setUser(getCurrentUser());
+    console.log('Auth check useEffect - Authenticated:', isLoggedIn());
   }, []);
 
   const handleLogin = (userData) => {

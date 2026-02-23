@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { logout } from '../utils/auth';
+import { apiCall } from '../utils/api';
 import Slots from './Slots';
 import Blackjack from './Blackjack';
 import Roulette from './Roulette';
@@ -7,6 +8,26 @@ import Roulette from './Roulette';
 export default function Dashboard({ user, onLogout }) {
   const [balance, setBalance] = useState(user?.balance || 1000);
   const [currentGame, setCurrentGame] = useState(null);
+  const [ranking, setRanking] = useState([]);
+  const [loadingRanking, setLoadingRanking] = useState(true);
+
+  // Pobierz ranking z backendu
+  useEffect(() => {
+    const fetchRanking = async () => {
+      try {
+        setLoadingRanking(true);
+        const data = await apiCall('/games/ranking', 'GET');
+        setRanking(data);
+      } catch (err) {
+        console.error('Błąd pobierania rankingu:', err);
+        setRanking([]);
+      } finally {
+        setLoadingRanking(false);
+      }
+    };
+
+    fetchRanking();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -208,31 +229,44 @@ export default function Dashboard({ user, onLogout }) {
                 🏆 Top 10 Graczy
               </h3>
               <div className="space-y-1 xs:space-y-2 sm:space-y-3">
-                {[
-                  { rank: 1, name: 'MystyGamer', balance: 50000, emoji: '👑' },
-                  { rank: 2, name: 'LuckyDraw', balance: 45500, emoji: '🥈' },
-                  { rank: 3, name: 'CardMaster', balance: 42000, emoji: '🥉' },
-                  { rank: 4, name: 'Ty', balance, emoji: '⭐' },
-                ].map((player) => (
-                  <div
-                    key={player.rank}
-                    className={`flex items-center justify-between p-2 xs:p-3 rounded-lg transition-all duration-300 gap-1.5 ${
-                      player.name === 'Ty'
-                        ? 'bg-gradient-to-r from-yellow-600/40 to-orange-600/40 border border-yellow-400/50'
-                        : 'bg-slate-700/40 border border-purple-400/30 hover:border-purple-400/60'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 min-w-0 flex-1">
-                      <span className="text-lg xs:text-xl font-black flex-shrink-0">{player.emoji}</span>
-                      <div className="min-w-0">
-                        <p className={`font-bold text-xs xs:text-sm sm:text-base truncate ${player.name === 'Ty' ? 'text-yellow-300' : 'text-white'}`}>
-                          #{player.rank} {player.name}
-                        </p>
+                {loadingRanking ? (
+                  <p className="text-center text-purple-300 text-sm py-4">Ładowanie rankingu...</p>
+                ) : ranking.length > 0 ? (
+                  ranking.map((player) => {
+                    // Generuj emoji na bazie rangu
+                    const getEmoji = (rank) => {
+                      if (rank === 1) return '👑';
+                      if (rank === 2) return '🥈';
+                      if (rank === 3) return '🥉';
+                      return '⭐';
+                    };
+
+                    const isCurrentUser = player.name === user?.username;
+
+                    return (
+                      <div
+                        key={player.rank}
+                        className={`flex items-center justify-between p-2 xs:p-3 rounded-lg transition-all duration-300 gap-1.5 ${
+                          isCurrentUser
+                            ? 'bg-gradient-to-r from-yellow-600/40 to-orange-600/40 border border-yellow-400/50'
+                            : 'bg-slate-700/40 border border-purple-400/30 hover:border-purple-400/60'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 min-w-0 flex-1">
+                          <span className="text-lg xs:text-xl font-black flex-shrink-0">{getEmoji(player.rank)}</span>
+                          <div className="min-w-0">
+                            <p className={`font-bold text-xs xs:text-sm sm:text-base truncate ${isCurrentUser ? 'text-yellow-300' : 'text-white'}`}>
+                              #{player.rank} {player.name} {isCurrentUser && '(Ty)'}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-base xs:text-lg sm:text-xl font-black text-emerald-300 flex-shrink-0">💰 {player.balance.toLocaleString()}</p>
                       </div>
-                    </div>
-                    <p className="text-base xs:text-lg sm:text-xl font-black text-emerald-300 flex-shrink-0">💰 {player.balance.toLocaleString()}</p>
-                  </div>
-                ))}
+                    );
+                  })
+                ) : (
+                  <p className="text-center text-purple-300 text-sm py-4">Brak danych rankingu</p>
+                )}
               </div>
             </section>
           </div>
