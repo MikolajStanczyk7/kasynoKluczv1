@@ -1,0 +1,473 @@
+/* Animacja obrotu koła */
+@keyframes roulette-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1800deg); /* 5 pełnych obrotów */
+  }
+}
+.roulette-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a0033 100%);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #4b5563;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.back-button:hover {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  background: #5a6472;
+}
+
+/* Główna karta */
+.roulette-card {
+  max-width: 800px;
+  width: 100%;
+  background: #1a0033;
+  border: 2px solid #FFD700;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
+}
+
+.roulette-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+/* ==================== KOŁO RULETKI ==================== */
+.roulette-wheel-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto 2rem;
+}
+
+.roulette-wheel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 8px solid #FFD700;
+  background: radial-gradient(circle, #222 0%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  transition: transform 0.1s linear;
+}
+
+/* Liczby na kole */
+.wheel-number {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  margin-left: -15px;
+  margin-top: -15px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.wheel-number.zero {
+  background: linear-gradient(135deg, #005500, #007700);
+  color: #00ff00;
+  width: 28px;
+  height: 28px;
+  z-index: 10;
+  box-shadow: none;
+  font-size: 0.75rem;
+}
+
+.wheel-number.red {
+  color: #ffcccc;
+}
+
+.wheel-number.black {
+  color: #cccccc;
+}
+
+/* Wskaźnik (górny punkt) */
+.roulette-pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 20px solid #FFD700;
+  z-index: 20;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));
+}
+
+/* ==================== WYNIK ==================== */
+.spin-result {
+  background: rgba(255, 215, 0, 0.1);
+  border: 2px solid #FFD700;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spin-result.win {
+  background: linear-gradient(135deg, #0a2a0a, #1a4a1a);
+  border-color: #00ff00;
+}
+
+.spin-result.lose {
+  background: linear-gradient(135deg, #2a0a0a, #4a1a1a);
+  border-color: #ff4444;
+}
+
+.result-number {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.number-text {
+  color: #FFD700;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.result-message {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #ddd;
+}
+
+.result-amounts {
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.win-text {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.lose-text {
+  color: #ff4444;
+  font-weight: bold;
+}
+
+/* Błąd */
+.error-message {
+  background: linear-gradient(135deg, #4a1a1a, #2a0a0a);
+  border: 2px solid #ff4444;
+  color: #ffaaaa;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ==================== SELEKTOR STAWEK ==================== */
+.bet-selector {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bet-selector label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #FFD700;
+}
+
+.bet-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bet-button {
+  background: linear-gradient(135deg, #662b0a, #884400);
+  border: 2px solid #FFD700;
+  color: #FFD700;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  min-width: 50px;
+}
+
+.bet-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #884400, #aa6600);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.bet-button.active {
+  background: linear-gradient(135deg, #FFD700, #ffed4e);
+  color: #0f0f0f;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.bet-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bet-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: #0f0f0f;
+  border: 2px solid #FFD700;
+  color: #FFD700;
+  border-radius: 0.375rem;
+  font-weight: bold;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.bet-input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.bet-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== SELEKTOR TYPU ZAKŁADU ==================== */
+.bet-type-selector {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bet-type-selector label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #FFD700;
+}
+
+.bet-type-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.bet-type-button {
+  padding: 0.75rem;
+  border: 2px solid #FFD700;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #1a0033, #0f0f0f);
+  color: white;
+}
+
+.bet-type-button:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.bet-type-button.active {
+  background: linear-gradient(135deg, #FFD700, #ffed4e);
+  color: #0f0f0f;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.bet-type-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.red-bet.active {
+  background: linear-gradient(135deg, #ff4444, #ff0000);
+  border-color: #ff0000;
+  color: white;
+}
+
+.black-bet.active {
+  background: linear-gradient(135deg, #333333, #000000);
+  border-color: #ffffff;
+  color: white;
+}
+
+.even-bet.active {
+  background: linear-gradient(135deg, #0066ff, #0088ff);
+  border-color: #0088ff;
+  color: white;
+}
+
+.odd-bet.active {
+  background: linear-gradient(135deg, #ff6600, #ff8800);
+  border-color: #ff8800;
+  color: white;
+}
+
+/* ==================== PRZYCISK SPIN ==================== */
+.spin-button {
+  width: 100%;
+  background: linear-gradient(135deg, #FFD700, #ffed4e);
+  color: #0f0f0f;
+  border: none;
+  padding: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-sizing: border-box;
+}
+
+.spin-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffed4e, #ffff77);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+.spin-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.6);
+}
+
+.spin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== SALDO ==================== */
+.balance-display {
+  background: rgba(255, 215, 0, 0.15);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.balance-display p {
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.balance-amount {
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* ==================== INFO ==================== */
+.roulette-info {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #FFD700;
+  margin-top: 1rem;
+}
+
+.roulette-info h3 {
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.roulette-info p {
+  color: #ddd;
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .roulette-card {
+    padding: 1rem;
+  }
+
+  .roulette-wheel-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .wheel-number.zero {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bet-type-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-wheel-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .roulette-title {
+    font-size: 1.75rem;
+  }
+
+  .spin-button {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .bet-selector,
+  .bet-type-selector {
+    padding: 0.75rem;
+  }
+}
